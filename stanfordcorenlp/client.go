@@ -13,9 +13,23 @@ import (
 )
 
 const (
-	AnnotatorTokenize = "tokenize"
-	AnnotatorSsplit   = "ssplit"
-	AnnotatorPos      = "pos"
+	AnnotatorTokenize   = "tokenize"
+	AnnotatorCleanxml   = "cleanxml"
+	AnnotatorSsplit     = "ssplit"
+	AnnotatorDocdate    = "docdate"
+	AnnotatorPos        = "pos"
+	AnnotatorLemma      = "lemma"
+	AnnotatorNer        = "ner"
+	AnnotatorRegexner   = "regexner"
+	AnnotatorSentiment  = "sentiment"
+	AnnotatorParse      = "parse"
+	AnnotatorDepparse   = "depparse"
+	AnnotatorDcoref     = "dcoref"
+	AnnotatorRelation   = "relation"
+	AnnotatorNatlog     = "natlog"
+	AnnotatorEntitylink = "entitylink"
+	AnnotatorKbp        = "kbp"
+	AnnotatorQuote      = "quote"
 )
 
 type Client interface {
