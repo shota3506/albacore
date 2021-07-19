@@ -23,17 +23,17 @@ func TestClientParse(t *testing.T) {
 	sentence := resp.Sentences[0]
 	assert.NotZero(t, sentence.Parse)
 
-	require.GreaterOrEqual(t, len(sentence.BasicDependencies), 1)
+	require.NotEmpty(t, len(sentence.BasicDependencies))
 	assert.NotZero(t, sentence.BasicDependencies[0].Dep)
 	assert.NotZero(t, sentence.BasicDependencies[0].GovernorGloss)
 	assert.NotZero(t, sentence.BasicDependencies[0].DependentGloss)
 
-	require.GreaterOrEqual(t, len(sentence.EnhancedDependencies), 1)
+	require.NotEmpty(t, len(sentence.EnhancedDependencies))
 	assert.NotZero(t, sentence.EnhancedDependencies[0].Dep)
 	assert.NotZero(t, sentence.EnhancedDependencies[0].GovernorGloss)
 	assert.NotZero(t, sentence.EnhancedDependencies[0].DependentGloss)
 
-	require.GreaterOrEqual(t, len(sentence.EnhancedPlusPlusDependencies), 1)
+	require.NotEmpty(t, len(sentence.EnhancedPlusPlusDependencies))
 	assert.NotZero(t, sentence.EnhancedPlusPlusDependencies[0].Dep)
 	assert.NotZero(t, sentence.EnhancedPlusPlusDependencies[0].GovernorGloss)
 	assert.NotZero(t, sentence.EnhancedPlusPlusDependencies[0].DependentGloss)

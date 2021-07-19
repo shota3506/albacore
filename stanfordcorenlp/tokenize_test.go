@@ -18,7 +18,7 @@ func TestClientTokenize(t *testing.T) {
 		"The quick brown fox jumped over the lazy dog.",
 	)
 	require.NoError(t, err)
-	assert.GreaterOrEqual(t, len(resp.Sentences), 1)
-	assert.GreaterOrEqual(t, len(resp.Sentences[0].Tokens), 1)
+	require.NotEmpty(t, len(resp.Sentences))
+	require.NotEmpty(t, len(resp.Sentences[0].Tokens))
 	assert.NotZero(t, resp.Sentences[0].Tokens[0].Word)
 }
