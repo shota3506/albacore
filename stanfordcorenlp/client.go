@@ -12,7 +12,7 @@ import (
 )
 
 type Client interface {
-	Tokenize(ctx context.Context, text string) (*Response, error)
+	Tokenize(ctx context.Context, text string) (*Document, error)
 }
 
 type client struct {
