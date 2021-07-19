@@ -7,8 +7,15 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/google/go-querystring/query"
+)
+
+const (
+	annotatorTokenize = "tokenize"
+	annotatorSsplit   = "ssplit"
+	annotatorPos      = "pos"
 )
 
 type Client interface {
@@ -31,8 +38,14 @@ func NewClient(ctx context.Context, url string) *client {
 }
 
 type properties struct {
-	Annotators   string `json:"annotators,omitempty"`
-	OutputFormat string `json:"outputFormat,omitempty"`
+	Annotators   *annotators `json:"annotators,omitempty"`
+	OutputFormat string      `json:"outputFormat,omitempty"`
+}
+
+type annotators []string
+
+func (a *annotators) MarshalJSON() ([]byte, error) {
+	return []byte(`"` + strings.Join(*a, ",") + `"`), nil
 }
 
 func (c *client) post(ctx context.Context, text string, props *properties) ([]byte, error) {
@@ -46,6 +59,9 @@ func (c *client) post(ctx context.Context, text string, props *properties) ([]by
 	}{
 		Properties: string(p),
 	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to encode query string: %w", err)
+	}
 
 	req, err := http.NewRequest(http.MethodPost, c.url, bytes.NewBufferString(text))
 	if err != nil {
