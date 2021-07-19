@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 )
 
-// Tokenize turns text into tokens.
-func (c *client) Tokenize(ctx context.Context, text string) (*Document, error) {
+// Parse performs constituency parsing and dependency parsing.
+func (c *client) Parse(ctx context.Context, text string) (*Document, error) {
 	resp, err := c.Do(ctx, text, &Properties{
-		Annotators:   &Annotators{AnnotatorTokenize, AnnotatorSsplit, AnnotatorPos},
+		Annotators:   &Annotators{AnnotatorTokenize, AnnotatorSsplit, AnnotatorPos, AnnotatorParse},
 		OutputFormat: "json",
 	})
 	if err != nil {

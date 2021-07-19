@@ -35,6 +35,7 @@ const (
 type Client interface {
 	Do(ctx context.Context, text string, props *Properties) ([]byte, error)
 	Tokenize(ctx context.Context, text string) (*Document, error)
+	Parse(ctx context.Context, text string) (*Document, error)
 }
 
 type client struct {
@@ -66,6 +67,7 @@ func (a *Annotators) MarshalJSON() ([]byte, error) {
 	return []byte(`"` + strings.Join(*a, ",") + `"`), nil
 }
 
+// Do sends HTTP request to Stanford CoreNLP API and returns response.
 func (c *client) Do(ctx context.Context, text string, props *Properties) ([]byte, error) {
 	p, err := json.Marshal(props)
 	if err != nil {
