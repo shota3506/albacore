@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestTokenize(t *testing.T) {
+func TestClientTokenize(t *testing.T) {
 	url := os.Getenv("STANFORD_CORENLP_URL")
 	c := NewClient(context.Background(), url)
 

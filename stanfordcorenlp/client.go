@@ -13,12 +13,13 @@ import (
 )
 
 const (
-	annotatorTokenize = "tokenize"
-	annotatorSsplit   = "ssplit"
-	annotatorPos      = "pos"
+	AnnotatorTokenize = "tokenize"
+	AnnotatorSsplit   = "ssplit"
+	AnnotatorPos      = "pos"
 )
 
 type Client interface {
+	Do(ctx context.Context, text string, props *Properties) ([]byte, error)
 	Tokenize(ctx context.Context, text string) (*Document, error)
 }
 
@@ -29,7 +30,7 @@ type client struct {
 
 var _ Client = (*client)(nil)
 
-// NewClient is a factory method to create a client for stanford corenlp server.
+// NewClient is a factory method to create a client for Stanford CoreNLP server.
 func NewClient(ctx context.Context, url string) *client {
 	return &client{
 		httpClient: &http.Client{},
@@ -37,18 +38,21 @@ func NewClient(ctx context.Context, url string) *client {
 	}
 }
 
-type properties struct {
-	Annotators   *annotators `json:"annotators,omitempty"`
+// A Properties provide specifications for what annotators to run and how to customize the annotators.
+type Properties struct {
+	Annotators   *Annotators `json:"annotators,omitempty"`
 	OutputFormat string      `json:"outputFormat,omitempty"`
 }
 
-type annotators []string
+// An Annotators is a list of annotator to run.
+// https://stanfordnlp.github.io/CoreNLP/annotators.html
+type Annotators []string
 
-func (a *annotators) MarshalJSON() ([]byte, error) {
+func (a *Annotators) MarshalJSON() ([]byte, error) {
 	return []byte(`"` + strings.Join(*a, ",") + `"`), nil
 }
 
-func (c *client) post(ctx context.Context, text string, props *properties) ([]byte, error) {
+func (c *client) Do(ctx context.Context, text string, props *Properties) ([]byte, error) {
 	p, err := json.Marshal(props)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal property: %w", err)
