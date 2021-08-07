@@ -13,8 +13,6 @@ import (
 
 type Client interface {
 	Do(ctx context.Context, text string, annotators AnnotatorType) ([]byte, error)
-	Tokenize(ctx context.Context, text string) (*Document, error)
-	Parse(ctx context.Context, text string) (*Document, error)
 }
 
 type client struct {
