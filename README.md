@@ -21,6 +21,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 
@@ -35,17 +36,106 @@ func main() {
 
 	// sample text
 	text := "The quick brown fox jumped over the lazy dog."
-	doc, err := client.Tokenize(ctx, text)
+	resp, err := client.Do(ctx, text, corenlp.AnnotatorTokenize)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println(doc) // The quick brown fox jumped over the lazy dog .
+	var s corenlp.Sentence
+	if err := json.Unmarshal(resp, &s); err != nil {
+		log.Fatal(err)
+	}
 
-	fmt.Println(doc.Sentences[0].Tokens[1].Word) // quick
-	fmt.Println(doc.Sentences[0].Tokens[1].Pos)  // JJ
+	fmt.Println(&s) // The quick brown fox jumped over the lazy dog .
 
-	fmt.Println(doc.Sentences[0].Tokens[3].Word) // fox
-	fmt.Println(doc.Sentences[0].Tokens[3].Pos)  // NN
+	fmt.Println(s.Tokens[1].Word) // quick
+	fmt.Println(s.Tokens[3].Word) // fox
+}
+```
+
+## Pos Tagging
+```go
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+
+	corenlp "github.com/shota3506/albacore/stanfordcorenlp"
+)
+
+func main() {
+	ctx := context.Background()
+
+	// create client for Stanford CoreNLP
+	client := corenlp.NewClient(ctx, "http://localhost:9000")
+
+	// sample text
+	text := "The quick brown fox jumped over the lazy dog."
+	resp, err := client.Do(ctx, text,
+		corenlp.AnnotatorTokenize|corenlp.AnnotatorSsplit|corenlp.AnnotatorPos)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var d corenlp.Document
+	if err := json.Unmarshal(resp, &d); err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(&d) // The quick brown fox jumped over the lazy dog .
+
+	fmt.Println(d.Sentences[0].Tokens[1].Word) // quick
+	fmt.Println(d.Sentences[0].Tokens[1].Pos)  // JJ
+
+	fmt.Println(d.Sentences[0].Tokens[3].Word) // fox
+	fmt.Println(d.Sentences[0].Tokens[3].Pos)  // NN
+}
+```
+
+## Parsing
+```go
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+
+	corenlp "github.com/shota3506/albacore/stanfordcorenlp"
+)
+
+func main() {
+	ctx := context.Background()
+
+	// create client for Stanford CoreNLP
+	client := corenlp.NewClient(ctx, "http://localhost:9000")
+
+	// sample text
+	text := "The quick brown fox jumped over the lazy dog."
+	resp, err := client.Do(ctx, text,
+		corenlp.AnnotatorTokenize|corenlp.AnnotatorSsplit|corenlp.AnnotatorPos|corenlp.AnnotatorParse)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var d corenlp.Document
+	if err := json.Unmarshal(resp, &d); err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(d.Sentences[0].Parse)
+	/*
+	  (ROOT
+	    (S
+	      (NP (DT The) (JJ quick) (JJ brown) (NN fox))
+	      (VP (VBD jumped)
+	        (PP (IN over)
+	          (NP (DT the) (JJ lazy) (NN dog))))
+	      (. .)))
+	*/
 }
 ```
