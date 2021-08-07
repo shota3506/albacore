@@ -18,7 +18,7 @@ func TestClientDo(t *testing.T) {
 		context.Background(),
 		"The quick brown fox jumped over the lazy dog.",
 		&Properties{
-			Annotators:   &Annotators{AnnotatorTokenize},
+			Annotators:   &Annotators{"tokenize"},
 			OutputFormat: "json",
 		},
 	)
@@ -32,15 +32,15 @@ func TestProperties(t *testing.T) {
 		expected   string
 	}{
 		{
-			&Properties{Annotators: &Annotators{AnnotatorTokenize}},
+			&Properties{Annotators: &Annotators{"tokenize"}},
 			`{"annotators":"tokenize"}`,
 		},
 		{
-			&Properties{Annotators: &Annotators{AnnotatorTokenize}, OutputFormat: "json"},
+			&Properties{Annotators: &Annotators{"tokenize"}, OutputFormat: "json"},
 			`{"annotators":"tokenize","outputFormat":"json"}`,
 		},
 		{
-			&Properties{Annotators: &Annotators{AnnotatorTokenize, AnnotatorSsplit}, OutputFormat: "json"},
+			&Properties{Annotators: &Annotators{"tokenize", "ssplit"}, OutputFormat: "json"},
 			`{"annotators":"tokenize,ssplit","outputFormat":"json"}`,
 		},
 	} {

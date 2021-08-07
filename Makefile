@@ -18,5 +18,5 @@ build_docker_corenlp:
 
 .PHONY: run_docker_corenlp
 run_docker_corenlp:
-	docker run -itd $(DOCKER_CORENLP_NAME)
+	docker run -itd -p 9000:9000 $(DOCKER_CORENLP_NAME)
 

@@ -8,7 +8,7 @@ import (
 // Parse performs constituency parsing and dependency parsing.
 func (c *client) Parse(ctx context.Context, text string) (*Document, error) {
 	resp, err := c.Do(ctx, text, &Properties{
-		Annotators:   &Annotators{AnnotatorTokenize, AnnotatorSsplit, AnnotatorPos, AnnotatorParse},
+		Annotators:   &Annotators{"tokenize", "ssplit", "pos", "parse"},
 		OutputFormat: "json",
 	})
 	if err != nil {

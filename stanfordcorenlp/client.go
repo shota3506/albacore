@@ -12,26 +12,6 @@ import (
 	"github.com/google/go-querystring/query"
 )
 
-const (
-	AnnotatorTokenize   = "tokenize"
-	AnnotatorCleanxml   = "cleanxml"
-	AnnotatorSsplit     = "ssplit"
-	AnnotatorDocdate    = "docdate"
-	AnnotatorPos        = "pos"
-	AnnotatorLemma      = "lemma"
-	AnnotatorNer        = "ner"
-	AnnotatorRegexner   = "regexner"
-	AnnotatorSentiment  = "sentiment"
-	AnnotatorParse      = "parse"
-	AnnotatorDepparse   = "depparse"
-	AnnotatorDcoref     = "dcoref"
-	AnnotatorRelation   = "relation"
-	AnnotatorNatlog     = "natlog"
-	AnnotatorEntitylink = "entitylink"
-	AnnotatorKbp        = "kbp"
-	AnnotatorQuote      = "quote"
-)
-
 type Client interface {
 	Do(ctx context.Context, text string, props *Properties) ([]byte, error)
 	Tokenize(ctx context.Context, text string) (*Document, error)
