@@ -41,12 +41,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	var s corenlp.Sentence
-	if err := json.Unmarshal(resp, &s); err != nil {
+	s, err := corenlp.UnmarshalSentence(resp)
+	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println(&s) // The quick brown fox jumped over the lazy dog .
+	fmt.Println(s) // The quick brown fox jumped over the lazy dog .
 
 	fmt.Println(s.Tokens[1].Word) // quick
 	fmt.Println(s.Tokens[3].Word) // fox
@@ -80,12 +80,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	var d corenlp.Document
-	if err := json.Unmarshal(resp, &d); err != nil {
+	d, err := corenlp.UnmarshalDocument(resp)
+	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println(&d) // The quick brown fox jumped over the lazy dog .
+	fmt.Println(d) // The quick brown fox jumped over the lazy dog .
 
 	fmt.Println(d.Sentences[0].Tokens[1].Word) // quick
 	fmt.Println(d.Sentences[0].Tokens[1].Pos)  // JJ
@@ -122,8 +122,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	var d corenlp.Document
-	if err := json.Unmarshal(resp, &d); err != nil {
+	d, err := corenlp.UnmarshalDocument(resp)
+	if err != nil {
 		log.Fatal(err)
 	}
 
