@@ -2,7 +2,6 @@ package stanfordcorenlp
 
 import (
 	"context"
-	"encoding/json"
 	"os"
 	"testing"
 
@@ -32,8 +31,7 @@ func (s *ClientTestSuite) TestDoTokenize() {
 	)
 	s.Require().NoError(err)
 
-	var sen Sentence
-	err = json.Unmarshal(resp, &sen)
+	sen, err := UnmarshalSentence(resp)
 	s.Require().NoError(err)
 
 	s.Require().NotEmpty(len(sen.Tokens))
@@ -48,8 +46,7 @@ func (s *ClientTestSuite) TestDoPos() {
 	)
 	s.Require().NoError(err)
 
-	var doc Document
-	err = json.Unmarshal(resp, &doc)
+	doc, err := UnmarshalDocument(resp)
 	s.Require().NoError(err)
 
 	s.Require().NotEmpty(len(doc.Sentences))
@@ -65,8 +62,7 @@ func (s *ClientTestSuite) TestDoLemma() {
 	)
 	s.Require().NoError(err)
 
-	var doc Document
-	err = json.Unmarshal(resp, &doc)
+	doc, err := UnmarshalDocument(resp)
 	s.Require().NoError(err)
 
 	s.Require().NotEmpty(len(doc.Sentences))
@@ -82,8 +78,7 @@ func (s *ClientTestSuite) TestDoParse() {
 	)
 	s.Require().NoError(err)
 
-	var doc Document
-	err = json.Unmarshal(resp, &doc)
+	doc, err := UnmarshalDocument(resp)
 	s.Require().NoError(err)
 
 	s.Require().GreaterOrEqual(len(doc.Sentences), 1)

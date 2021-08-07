@@ -1,9 +1,20 @@
 package stanfordcorenlp
 
-import "strings"
+import (
+	"encoding/json"
+	"strings"
+)
 
 type Document struct {
 	Sentences []*Sentence `json:"sentences"`
+}
+
+func UnmarshalDocument(data []byte) (*Document, error) {
+	var d Document
+	if err := json.Unmarshal(data, &d); err != nil {
+		return nil, err
+	}
+	return &d, nil
 }
 
 func (d *Document) String() string {
@@ -21,6 +32,14 @@ type Sentence struct {
 	BasicDependencies            []*DependencyNode `json:"basicDependencies,omitempty"`
 	EnhancedDependencies         []*DependencyNode `json:"enhancedDependencies,omitempty"`
 	EnhancedPlusPlusDependencies []*DependencyNode `json:"enhancedPlusPlusDependencies,omitempty"`
+}
+
+func UnmarshalSentence(data []byte) (*Sentence, error) {
+	var s Sentence
+	if err := json.Unmarshal(data, &s); err != nil {
+		return nil, err
+	}
+	return &s, nil
 }
 
 func (s *Sentence) String() string {
