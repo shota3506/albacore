@@ -7,13 +7,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
 
 	"github.com/google/go-querystring/query"
 )
 
 type Client interface {
-	Do(ctx context.Context, text string, props *Properties) ([]byte, error)
+	Do(ctx context.Context, text string, annotators AnnotatorType) ([]byte, error)
 	Tokenize(ctx context.Context, text string) (*Document, error)
 	Parse(ctx context.Context, text string) (*Document, error)
 }
@@ -33,23 +32,18 @@ func NewClient(ctx context.Context, url string) *client {
 	}
 }
 
-// A Properties provide specifications for what annotators to run and how to customize the annotators.
-type Properties struct {
-	Annotators   *Annotators `json:"annotators,omitempty"`
-	OutputFormat string      `json:"outputFormat,omitempty"`
-}
-
-// An Annotators is a list of annotator to run.
-// https://stanfordnlp.github.io/CoreNLP/annotators.html
-type Annotators []string
-
-func (a *Annotators) MarshalJSON() ([]byte, error) {
-	return []byte(`"` + strings.Join(*a, ",") + `"`), nil
+// A properties provide specifications for what annotators to run and how to customize the annotators.
+type properties struct {
+	Annotators   AnnotatorType `json:"annotators,omitempty"`
+	OutputFormat string        `json:"outputFormat,omitempty"`
 }
 
 // Do sends HTTP request to Stanford CoreNLP API and returns response.
-func (c *client) Do(ctx context.Context, text string, props *Properties) ([]byte, error) {
-	p, err := json.Marshal(props)
+func (c *client) Do(ctx context.Context, text string, annotators AnnotatorType) ([]byte, error) {
+	p, err := json.Marshal(properties{
+		Annotators:   annotators,
+		OutputFormat: "json",
+	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal property: %w", err)
 	}
