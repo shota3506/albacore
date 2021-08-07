@@ -57,6 +57,23 @@ func (s *ClientTestSuite) TestDoPos() {
 	s.NotZero(doc.Sentences[0].Tokens[0].Word)
 }
 
+func (s *ClientTestSuite) TestDoLemma() {
+	resp, err := s.c.Do(
+		context.Background(),
+		"The quick brown fox jumped over the lazy dog.",
+		AnnotatorTokenize|AnnotatorSsplit|AnnotatorPos|AnnotatorLemma,
+	)
+	s.Require().NoError(err)
+
+	var doc Document
+	err = json.Unmarshal(resp, &doc)
+	s.Require().NoError(err)
+
+	s.Require().NotEmpty(len(doc.Sentences))
+	s.Require().NotEmpty(len(doc.Sentences[0].Tokens))
+	s.NotZero(doc.Sentences[0].Tokens[0].Lemma)
+}
+
 func (s *ClientTestSuite) TestDoParse() {
 	resp, err := s.c.Do(
 		context.Background(),
