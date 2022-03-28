@@ -1,10 +1,8 @@
 package stanfordcorenlp
 
 import (
+	"bytes"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestAnnotatorType_String(t *testing.T) {
@@ -18,7 +16,11 @@ func TestAnnotatorType_String(t *testing.T) {
 		{0, ""},
 		{1 << 30, ""},
 	} {
-		assert.Equal(t, testcase.expected, testcase.annotators.String())
+		if testcase.expected != testcase.annotators.String() {
+			t.Errorf("Not equal: \n"+
+				"expected: %s\n"+
+				"actual  : %s", testcase.expected, testcase.annotators.String())
+		}
 	}
 }
 
@@ -34,7 +36,14 @@ func TestAnnotatorType_MarshalJSON(t *testing.T) {
 		{1 << 30, []byte(`""`)},
 	} {
 		b, err := testcase.annotators.MarshalJSON()
-		require.NoError(t, err)
-		assert.Equal(t, testcase.expected, b)
+		if err != nil {
+			t.Errorf("Received unexpected error: %+v", err)
+			t.FailNow()
+		}
+		if !bytes.Equal(testcase.expected, b) {
+			t.Errorf("Not equal: \n"+
+				"expected: %s\n"+
+				"actual  : %s", testcase.expected, b)
+		}
 	}
 }

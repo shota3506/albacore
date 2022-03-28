@@ -4,100 +4,151 @@ import (
 	"context"
 	"os"
 	"testing"
-
-	"github.com/stretchr/testify/suite"
 )
 
-type ClientTestSuite struct {
-	suite.Suite
-
-	c Client
-}
-
-func TestClient(t *testing.T) {
-	suite.Run(t, &ClientTestSuite{})
-}
-
-func (s *ClientTestSuite) SetupSuite() {
+func TestClient_DoTokenize(t *testing.T) {
 	url := os.Getenv("STANFORD_CORENLP_URL")
-	s.c = NewClient(context.Background(), url)
-}
+	client := NewClient(context.Background(), url)
 
-func (s *ClientTestSuite) TestDoTokenize() {
-	resp, err := s.c.Do(
+	resp, err := client.Do(
 		context.Background(),
 		"The quick brown fox jumped over the lazy dog.",
 		AnnotatorTokenize,
 	)
-	s.Require().NoError(err)
+	if err != nil {
+		t.Errorf("Received unexpected error: %+v", err)
+		t.FailNow()
+	}
 
 	sen, err := UnmarshalSentence(resp)
-	s.Require().NoError(err)
+	if err != nil {
+		t.Errorf("Received unexpected error: %+v", err)
+		t.FailNow()
+	}
 
-	s.Require().NotEmpty(len(sen.Tokens))
-	s.NotZero(sen.Tokens[0].Word)
+	if len(sen.Tokens) == 0 {
+		t.Errorf("Should not be empty, but was %v", sen.Tokens)
+		t.FailNow()
+	}
+	if sen.Tokens[0].Word == "" {
+		t.Errorf("Should not be zero, but was %v", sen.Tokens[0].Word)
+	}
 }
 
-func (s *ClientTestSuite) TestDoPos() {
-	resp, err := s.c.Do(
+func TestClinet_DoPos(t *testing.T) {
+	url := os.Getenv("STANFORD_CORENLP_URL")
+	client := NewClient(context.Background(), url)
+
+	resp, err := client.Do(
 		context.Background(),
 		"The quick brown fox jumped over the lazy dog.",
 		AnnotatorTokenize|AnnotatorSsplit|AnnotatorPos,
 	)
-	s.Require().NoError(err)
+	if err != nil {
+		t.Errorf("Received unexpected error: %+v", err)
+		t.FailNow()
+	}
 
 	doc, err := UnmarshalDocument(resp)
-	s.Require().NoError(err)
+	if err != nil {
+		t.Errorf("Received unexpected error: %+v", err)
+		t.FailNow()
+	}
 
-	s.Require().NotEmpty(len(doc.Sentences))
-	s.Require().NotEmpty(len(doc.Sentences[0].Tokens))
-	s.NotZero(doc.Sentences[0].Tokens[0].Word)
+	if sentences := doc.Sentences; len(sentences) == 0 {
+		t.Errorf("Should not be empty, but was %v", sentences)
+		t.FailNow()
+	}
+	if tokens := doc.Sentences[0].Tokens; len(tokens) == 0 {
+		t.Errorf("Should not be empty, but was %v", tokens)
+		t.FailNow()
+	}
+	if word := doc.Sentences[0].Tokens[0].Word; word == "" {
+		t.Errorf("Should not be zero, but was %v", word)
+	}
 }
 
-func (s *ClientTestSuite) TestDoLemma() {
-	resp, err := s.c.Do(
+func TestClient_DoLemma(t *testing.T) {
+	url := os.Getenv("STANFORD_CORENLP_URL")
+	client := NewClient(context.Background(), url)
+
+	resp, err := client.Do(
 		context.Background(),
 		"The quick brown fox jumped over the lazy dog.",
 		AnnotatorTokenize|AnnotatorSsplit|AnnotatorPos|AnnotatorLemma,
 	)
-	s.Require().NoError(err)
+	if err != nil {
+		t.Errorf("Received unexpected error: %+v", err)
+		t.FailNow()
+	}
 
 	doc, err := UnmarshalDocument(resp)
-	s.Require().NoError(err)
+	if err != nil {
+		t.Errorf("Received unexpected error: %+v", err)
+		t.FailNow()
+	}
 
-	s.Require().NotEmpty(len(doc.Sentences))
-	s.Require().NotEmpty(len(doc.Sentences[0].Tokens))
-	s.NotZero(doc.Sentences[0].Tokens[0].Lemma)
+	if sentences := doc.Sentences; len(sentences) == 0 {
+		t.Errorf("Should not be empty, but was %v", sentences)
+		t.FailNow()
+	}
+	if tokens := doc.Sentences[0].Tokens; len(tokens) == 0 {
+		t.Errorf("Should not be empty, but was %v", tokens)
+		t.FailNow()
+	}
+	if lemma := doc.Sentences[0].Tokens[0].Lemma; lemma == "" {
+		t.Errorf("Should not be zero, but was %v", lemma)
+	}
 }
 
-func (s *ClientTestSuite) TestDoParse() {
-	resp, err := s.c.Do(
+func TestClient_DoParse(t *testing.T) {
+	url := os.Getenv("STANFORD_CORENLP_URL")
+	client := NewClient(context.Background(), url)
+
+	resp, err := client.Do(
 		context.Background(),
 		"The quick brown fox jumped over the lazy dog.",
 		AnnotatorTokenize|AnnotatorSsplit|AnnotatorPos|AnnotatorParse,
 	)
-	s.Require().NoError(err)
+	if err != nil {
+		t.Errorf("Received unexpected error: %+v", err)
+		t.FailNow()
+	}
 
 	doc, err := UnmarshalDocument(resp)
-	s.Require().NoError(err)
+	if err != nil {
+		t.Errorf("Received unexpected error: %+v", err)
+		t.FailNow()
+	}
 
-	s.Require().GreaterOrEqual(len(doc.Sentences), 1)
+	if !(len(doc.Sentences) >= 1) {
+		t.Errorf("\"%v\" is not greater than or equal to \"%v\"", len(doc.Sentences), 1)
+		t.FailNow()
+	}
 
 	sentence := doc.Sentences[0]
-	s.NotZero(sentence.Parse)
+	if parse := sentence.Parse; parse == "" {
+		t.Errorf("Should not be zero, but was %v", parse)
+		t.FailNow()
+	}
 
-	s.Require().NotEmpty(len(sentence.BasicDependencies))
-	s.NotZero(sentence.BasicDependencies[0].Dep)
-	s.NotZero(sentence.BasicDependencies[0].GovernorGloss)
-	s.NotZero(sentence.BasicDependencies[0].DependentGloss)
-
-	s.Require().NotEmpty(len(sentence.EnhancedDependencies))
-	s.NotZero(sentence.EnhancedDependencies[0].Dep)
-	s.NotZero(sentence.EnhancedDependencies[0].GovernorGloss)
-	s.NotZero(sentence.EnhancedDependencies[0].DependentGloss)
-
-	s.Require().NotEmpty(len(sentence.EnhancedPlusPlusDependencies))
-	s.NotZero(sentence.EnhancedPlusPlusDependencies[0].Dep)
-	s.NotZero(sentence.EnhancedPlusPlusDependencies[0].GovernorGloss)
-	s.NotZero(sentence.EnhancedPlusPlusDependencies[0].DependentGloss)
+	for _, dependencies := range [][]*DependencyNode{
+		sentence.BasicDependencies,
+		sentence.EnhancedDependencies,
+		sentence.EnhancedPlusPlusDependencies,
+	} {
+		if len(dependencies) == 0 {
+			t.Errorf("Should not be empty, but was %v", dependencies)
+			t.FailNow()
+		}
+		if dep := dependencies[0].Dep; dep == "" {
+			t.Errorf("Should not be zero, but was %v", dep)
+		}
+		if governorGloss := dependencies[0].GovernorGloss; governorGloss == "" {
+			t.Errorf("Should not be zero, but was %v", governorGloss)
+		}
+		if dependentGloss := dependencies[0].DependentGloss; dependentGloss == "" {
+			t.Errorf("Should not be zero, but was %v", dependentGloss)
+		}
+	}
 }

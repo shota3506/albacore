@@ -1,5 +1,6 @@
 IMAGE_TAG ?= latest
 DOCKER_CORENLP_NAME ?= albacore/corenlp
+STANFORD_CORENLP_URL ?= http://localhost:9000
 
 .PHONY: all
 all: vet
@@ -10,7 +11,7 @@ vet:
 
 .PHONY: test
 test:
-	godotenv -f .env go test -v ./...
+	STANFORD_CORENLP_URL=$(STANFORD_CORENLP_URL) go test -v ./...
 
 .PHONY: build_docker_corenlp
 build_docker_corenlp:

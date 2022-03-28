@@ -2,8 +2,6 @@ package stanfordcorenlp
 
 import (
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestDocument(t *testing.T) {
@@ -28,7 +26,12 @@ func TestDocument(t *testing.T) {
 			},
 		},
 	}
-	assert.Equal(t, "Hello world . Hello world again .", document.String())
+
+	if document.String() != "Hello world . Hello world again ." {
+		t.Errorf("Not equal: \n"+
+			"expected: %s\n"+
+			"actual  : %s", "Hello world . Hello world again .", document.String())
+	}
 }
 
 func TestSentece(t *testing.T) {
@@ -48,7 +51,11 @@ func TestSentece(t *testing.T) {
 		},
 	}
 
-	assert.Equal(t, "The quick brown fox jumped over the lazy dog .", sentence.String())
+	if sentence.String() != "The quick brown fox jumped over the lazy dog ." {
+		t.Errorf("Not equal: \n"+
+			"expected: %s\n"+
+			"actual  : %s", "The quick brown fox jumped over the lazy dog .", sentence.String())
+	}
 }
 
 func TestToken(t *testing.T) {
@@ -57,5 +64,9 @@ func TestToken(t *testing.T) {
 		Word:  "word",
 	}
 
-	assert.Equal(t, "word", token.String())
+	if token.String() != "word" {
+		t.Errorf("Not equal: \n"+
+			"expected: %s\n"+
+			"actual  : %s", "word", token.String())
+	}
 }
